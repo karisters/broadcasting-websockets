@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Socket.IO chat</title>
+    <script src="./js/jquery-1.11.2.js"></script>
+    <script src="./js/jquery.cookie.js"></script>
+    <script src="./js/engine.io.js"></script>
+    <script>
+        $(function () {
+            var socket = new eio.Socket('wss://localhost:3000/')
+                    , authId = ''
+                    , authKey = ''
+                    , send = function () {
+                        var message = JSON.stringify({id: authId, key: authKey})
+                        $.cookie('auth', message)
+                        socket.send(message)
+                    }
+                    , revokeSession = function () {
+                        try {
+                            var storedSession = JSON.parse($.cookie('auth'))
+                            if ('id' in storedSession && 'key' in storedSession) {
+                                authId = storedSession.id
+                                authKey = storedSession.key
+                            }
+                        } catch (e) {
+                        }
+                    }
+                    , invalidate = function (reason) {
+                        $('#auth span').text(reason);
+                    }
+
+//            revokeSession();
+            send();
+
+            $('form').submit(function () {
+                authId = $('#id').val()
+                authKey = $('#key').val()
+                send();
+                return false;
+            });
+
+            socket.on('message', function (msg) { // open close
+                invalidate('')
+                try {
+                    var msg = JSON.parse(msg)
+                } catch (e) {
+                    invalidate('Server response is malformed')
+                    return;
+                }
+
+                if (typeof msg !== 'object') {
+                    invalidate('Server response is malformed')
+                    return;
+                }
+
+                if ('auth' in msg && msg.auth) {
+                    $("#auth").hide();
+                    $("#message").show();
+
+                    $.cookie('auth', JSON.stringify({id: authId, key: authKey}))
+
+                    if ('message' in msg) {
+                        $('#messages').append('<li>' + msg.message + '</li>')
+                    }
+                }
+
+                if ('auth' in msg && !msg.auth && 'reason' in msg) {
+                    invalidate(msg.reason)
+                }
+            });
+        })
+    </script>
+    <style>
+        #auth {
+            display: block;
+        }
+
+        #message {
+            display: none;
+        }
+
+        #auth span {
+            color: red;
+        }
+    </style>
+</head>
+<body>
+<form action="">
+    <div id="auth">
+        <fieldset>
+            <legend>Auth</legend>
+            <input id="id" value="1"/><br/><br/>
+            <input id="key" value="ab:ab:ab:ab:ab:ab"/><br/><br/>
+            <button>Authenticate</button>
+            <span></span>
+        </fieldset>
+    </div>
+    <div id="message">
+        <h3>Messages:</h3>
+        <ul id="messages"></ul>
+    </div>
+</form>
+</body>
+</html>

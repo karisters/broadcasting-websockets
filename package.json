@@ -1,0 +1,14 @@
+{
+  "name": "broadcasting-messenger",
+  "description": "Broadcasts messeges to all connected clients over websockets",
+  "version": "0.0.1",
+  "contributors": [
+    "Vladimir Shteinikov (karisters@yandex.ru)"
+  ],
+  "main": "./server.js",
+  "dependencies": {
+    "engine.io": "1.5.1",
+    "pg": "*",
+    "node-uuid": "*"
+  }
+}
