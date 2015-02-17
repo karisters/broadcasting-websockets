@@ -1,6 +1,12 @@
 {
   "production": {
-
+    "db": {
+      "host": "127.0.0.1",
+      "user": "",
+      "password": "",
+      "dbname": ""
+    },
+    "port": 3000
   },
   "development": {
     "db": {
@@ -8,6 +14,7 @@
       "user": "postgres",
       "password": "1",
       "dbname": "messenger"
-    }
+    },
+    "port": 3000
   }
 }

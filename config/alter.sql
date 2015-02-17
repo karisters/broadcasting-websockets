@@ -1,8 +1,5 @@
 DROP TABLE IF EXISTS "users";
-CREATE TABLE "users" (
-	"id" int4 NOT NULL,
-	"key" VARCHAR(17) NOT NULL
-) WITH (OIDS=FALSE);
+CREATE TABLE "users" (	"id" int4 NOT NULL,"key" VARCHAR(17) NOT NULL) WITH (OIDS=FALSE);
 ALTER TABLE "users" ADD CONSTRAINT "users_pkey" PRIMARY KEY ("id");
 DROP SEQUENCE IF EXISTS "users_id_seq";
 CREATE SEQUENCE users_id_seq
